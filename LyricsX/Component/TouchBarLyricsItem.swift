@@ -11,8 +11,9 @@ import AppKit
 import CXShim
 import LyricsCore
 import OpenCC
+import Combine
 
-@available(OSX 10.12.2, *)
+@available(OSX 15, *)
 class TouchBarLyricsItem: NSCustomTouchBarItem {
     
     private var lyricsTextField = KaraokeLabel(labelWithString: "")
@@ -34,11 +35,6 @@ class TouchBarLyricsItem: NSCustomTouchBarItem {
     func commonInit() {
         view = lyricsTextField
         customizationLabel = "Lyrics"
-        AppController.shared.$currentLyrics
-            .combineLatest(AppController.shared.$currentLineIndex)
-            .receive(on: DispatchQueue.lyricsDisplay.cx)
-            .invoke(TouchBarLyricsItem.handleLyricsDisplay, weaklyOn: self)
-            .store(in: &cancelBag)
     }
     
     private func handleLyricsDisplay(event: (lyrics: Lyrics?, index: Int?)) {
